@@ -47,4 +47,33 @@ void UART_vSendStringSync(u8 *A_u8Str);
 u16 UART_u16ReceiveDataSync();
 
 
+/**********************************************************************************************************
+ * Description : Interface Function to Set the callback function for TXC (transmit complete)
+ * Outputs     : void
+ * Inputs      : the ISR function
+ ***********************************************************************************************************/
+void UART_vSetCallBackTx(void (*ptr)(void));
+
+/**********************************************************************************************************
+ * Description : Interface Function to Set the callback function for RXC (receive complete)
+ * Outputs     : void
+ * Inputs      : the ISR function
+ ***********************************************************************************************************/
+void UART_vSetCallBackRX(void (*ptr)(u16));
+
+/**********************************************************************************************************
+ * Description : Interface Function to Set the callback function for UDRE (USART data register empty)
+ * Outputs     : void
+ * Inputs      : the ISR function
+ ***********************************************************************************************************/
+void UART_vSetCallBackUDRE(void (*ptr)(void));
+
+/**********************************************************************************************************
+ * Description : Interface Function to Send data asynchronous using TXC flag
+ * Outputs     : void
+ * Inputs      : data
+ ***********************************************************************************************************/
+void UART_vSendCharAsync(u16 A_u16Data);
+
+
 #endif /* MCAL_UART_UART_INT_H_ */

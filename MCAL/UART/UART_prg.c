@@ -141,3 +141,72 @@ u16 UART_u16ReceiveDataSync(){
 
 	return L_u16Data;
 }
+
+/**********************************************************************************************************
+ * Description : Interface Function to Set the callback function for TXC (transmit complete)
+ * Outputs     : void
+ * Inputs      : the ISR function
+ ***********************************************************************************************************/
+void UART_vSetCallBackTx(void (*ptr)(void)){
+	G_TX_COMPLETE_PTR_Iv_Ov = ptr;
+}
+
+/**********************************************************************************************************
+ * Description : Interface Function to Set the callback function for RXC (receive complete)
+ * Outputs     : void
+ * Inputs      : the ISR function
+ ***********************************************************************************************************/
+void UART_vSetCallBackRX(void (*ptr)(u16)){
+	G_RX_COMPLETE_PTR_Iu16_Ov = ptr;
+}
+
+/**********************************************************************************************************
+ * Description : Interface Function to Set the callback function for UDRE (USART data register empty)
+ * Outputs     : void
+ * Inputs      : the ISR function
+ ***********************************************************************************************************/
+void UART_vSetCallBackUDRE(void (*ptr)(void)){
+	G_UDRE_PTR_Iv_Ov = ptr;
+}
+
+
+/**********************************************************************************************************
+ * Description : Interface Function to Send data asynchronous using TXC flag
+ * Outputs     : void
+ * Inputs      : data
+ ***********************************************************************************************************/
+void UART_vSendCharAsync(u16 A_u16Data){
+	/*Handle 9-bits character mode*/
+	#if CHARACTER_SIZE == BIT_9_DATA
+		if(A_u16Data & (1<<8)) {
+			SET_BIT(UCSRB, TXB8);
+		} else {
+			CLR_BIT(UCSRB, TXB8);
+		}
+	#endif
+
+	/*Sending the lower byte*/
+	UDR = (u8)A_u16Data;
+}
+
+
+/*USART, RX Complete*/
+void __vector_13(void) {
+	if(G_RX_COMPLETE_PTR_Iu16_Ov != ADDRESS_NULL) {
+		G_RX_COMPLETE_PTR_Iu16_Ov(UDR);
+	}
+}
+
+/*USART Data Register Empty*/
+void __vector_14(void){
+	if(G_UDRE_PTR_Iv_Ov != ADDRESS_NULL) {
+		G_UDRE_PTR_Iv_Ov();
+	}
+}
+
+/*USART, TX Complete*/
+void __vector_15(void){
+	if(G_TX_COMPLETE_PTR_Iv_Ov != ADDRESS_NULL) {
+		G_TX_COMPLETE_PTR_Iv_Ov();
+	}
+}

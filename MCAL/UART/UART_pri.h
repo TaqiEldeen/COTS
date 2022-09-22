@@ -53,5 +53,15 @@
 #define FALLING_XCK_EDGE	1
 
 
+/****************		UART ISR 		****************/
+void __vector_13(void)__attribute__((signal));  /*USART, RX Complete*/
+void __vector_14(void)__attribute__((signal));  /*USART, RX Complete*/
+void __vector_15(void)__attribute__((signal));  /*USART, TX Complete*/
+
+
+/****************		UART Pointers to function		****************/
+void  (* G_RX_COMPLETE_PTR_Iu16_Ov) (u16) = ADDRESS_NULL;
+void (* G_TX_COMPLETE_PTR_Iv_Ov) (void) = ADDRESS_NULL;
+void (* G_UDRE_PTR_Iv_Ov) (void) = ADDRESS_NULL;
 
 #endif /* MCAL_UART_UART_PRI_H_ */
