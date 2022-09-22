@@ -13,7 +13,6 @@
 #include "../../MCAL/UART/UART_cfg.h"
 #include "../../MCAL/UART/UART_reg.h"
 #include "../../MCAL/UART/UART_int.h"
-#include "../../MCAL/WDT/WDT_int.h"
 
 
 
@@ -21,6 +20,8 @@
  * Description : Interface Function to setup the UART based on the configuration
  * Outputs     : void
  * Inputs      : BaudRate
+ * NOTES	   :the Global Interrupt Flag should be cleared (and interrupts globally-disabled)
+ * 				when doing the initialization.
  ***********************************************************************************************************/
 void UART_vInit(u16 A_u16BaudRate){
 	/*Applying the configured modes in Register UCSRB*/
@@ -35,6 +36,7 @@ void UART_vInit(u16 A_u16BaudRate){
 	/*Applying the configured modes in Register UCSRA*/
 
 	/*The URSEL must be one when writing the UCSRC.*/
+	UCSRC = 0x80;/*Clear the UCSRC register*/
 	UCSRC |= (1 << URSEL)
 			|(USART_MODE 		<< UMSEL)
 			|(PARITY_MODE 		<< UPM0)
@@ -52,15 +54,12 @@ void UART_vInit(u16 A_u16BaudRate){
 
 	/*Choosing CLK polarity if in SYNC mode*/
 	#if USART_MODE == SYNC_MODE
-		UCSRC |= (CLK_POLARITY	<< UCPOL);
+		UCSRC |= (1<<UCSZ1) | (CLK_POLARITY	<< UCPOL);
 	#endif
 
 	/*BAUD rate configuration*/
 	UBRRH =  ( (0<<URSEL) | (A_u16BaudRate >> 8) );
 	UBRRL = (u8)A_u16BaudRate;
-
-	/*Enable the WDT*/
-	WDT_vEnable();
 
 	/*Setup the TX & RX pins*/
 	DIO_vSetPinDir(TX_PORT, TX_PIN, DIR_OUTPUT);
@@ -77,9 +76,7 @@ void UART_vSendCharSync(u16 A_u16Data){
 
 
 	/*Wait till UDR is empty*/
-	WDT_vSetSleep(WDT_SLEEP_16_3_MS);
 	while( !(UCSRA & (1<<UDRE)) );
-	WDT_vDisable();
 
 	/*Handle 9-bits character mode*/
 	#if CHARACTER_SIZE == BIT_9_DATA
@@ -117,6 +114,7 @@ void UART_vSendStringSync(u8 *A_u8Str){
 		UART_vSendCharSync(A_u8Str[L_u8Iterator]);
 		L_u8Iterator++;
 	}
+	UART_vSendCharSync('\0');
 	return;
 }
 
@@ -146,6 +144,7 @@ u16 UART_u16ReceiveDataSync(){
  * Description : Interface Function to Set the callback function for TXC (transmit complete)
  * Outputs     : void
  * Inputs      : the ISR function
+ * NOTES	   : to enable using transmitting using interrupts, you must send a data
  ***********************************************************************************************************/
 void UART_vSetCallBackTx(void (*ptr)(void)){
 	G_TX_COMPLETE_PTR_Iv_Ov = ptr;

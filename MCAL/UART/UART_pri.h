@@ -55,7 +55,7 @@
 
 /****************		UART ISR 		****************/
 void __vector_13(void)__attribute__((signal));  /*USART, RX Complete*/
-void __vector_14(void)__attribute__((signal));  /*USART, RX Complete*/
+void __vector_14(void)__attribute__((signal));  /*USART Data Register Empty*/
 void __vector_15(void)__attribute__((signal));  /*USART, TX Complete*/
 
 

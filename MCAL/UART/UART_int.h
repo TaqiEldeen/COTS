@@ -10,7 +10,7 @@
 #define MCAL_UART_UART_INT_H_
 
 
-/*Available baud rates*/
+/*Available baud rates, in 8MHZ FCPU*/
 #define UART_BAUD_RATE_9600		51
 
 
@@ -19,6 +19,8 @@
  * Description : Interface Function to setup the UART based on the configuration
  * Outputs     : void
  * Inputs      : BaudRate
+ * NOTES	   :the Global Interrupt Flag should be cleared (and interrupts globally-disabled)
+ * 				when doing the initialization.
  ***********************************************************************************************************/
 void UART_vInit(u16 A_u16BaudRate);
 
@@ -51,6 +53,7 @@ u16 UART_u16ReceiveDataSync();
  * Description : Interface Function to Set the callback function for TXC (transmit complete)
  * Outputs     : void
  * Inputs      : the ISR function
+ * NOTES	   : to enable using transmitting using interrupts, you must send a data
  ***********************************************************************************************************/
 void UART_vSetCallBackTx(void (*ptr)(void));
 
