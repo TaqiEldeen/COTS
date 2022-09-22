@@ -1,0 +1,19 @@
+/*
+ * StepperMotor_cfg.h
+ *
+ *  Created on: 25 Aug 2022
+ *      Author: 20109
+ */
+
+#ifndef HAL_STEPPERMOTOR_STEPPERMOTOR_CFG_H_
+#define HAL_STEPPERMOTOR_STEPPERMOTOR_CFG_H_
+
+#define COILS_PORT PORTA_ID
+
+#define BLUE_COIL_PIN   PIN2_ID
+#define PINK_COIL_PIN   PIN3_ID
+#define YELLOW_COIL_PIN PIN1_ID
+#define ORANGE_COIL_PIN PIN0_ID
+
+#define STEPS_MODE HALF_STEP_MODE
+#endif /* HAL_STEPPERMOTOR_STEPPERMOTOR_CFG_H_ */
