@@ -46,7 +46,7 @@ void UART_vInit(u16 A_u16BaudRate){
 	/*Choosing the character size*/
 	#if CHARACTER_SIZE == BIT_9_DATA
 		SET_BIT(UCSRB, UCSZ2);
-		UCSRC |= (1<<UCSZ1) | (1<<UCSZ2);
+		UCSRC |= (1<<URSEL) | (1<<UCSZ1) | (1<<UCSZ2);
 	#else
 		UCSRC |= (1<<URSEL)|(CHARACTER_SIZE << UCSZ0);
 	#endif
