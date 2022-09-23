@@ -72,4 +72,11 @@
 #define SPI_DOUBLE_SPEED	SPI2x_DISABLE
 
 
+/*SPI pins/ports*/
+#define SPI_PORT		PORTB_ID
+#define SPI_SS_PIN		PIN4_ID
+#define SPI_MOSI_PIN	PIN5_ID
+#define SPI_MISO_PIN	PIN6_ID
+#define SPI_SCK_PIN		PIN7_ID
+
 #endif /* MCAL_SPI_SPI_CFG_H_ */

@@ -19,6 +19,7 @@
  * Description : Interface Function to setup the SPI
  * Outputs     : void
  * Inputs      : void
+ * NOTE		   : based on configuration the SPI is initialised in MASTER or SLAVE
  ***********************************************************************************************************/
 void SPI_vInit(){
 	/*setup the SPI*/
@@ -36,6 +37,16 @@ void SPI_vInit(){
 		SET_BIT(SPSR, SPI2X);
 	#else
 		CLR_BIT(SPSR, SPI2X);
+	#endif
+
+	/*setup pins*/
+	DIO_vSetPinDir(SPI_PORT, SPI_MOSI_PIN, DIR_OUTPUT);
+	DIO_vSetPinDir(SPI_PORT, SPI_MISO_PIN, DIR_INPUT);
+
+	#if SPI_MODE_SELECT == SPI_MASTER
+		DIO_vSetPinDir(SPI_PORT, SPI_SCK_PIN, DIR_OUTPUT);
+	#else SPI_MODE_SELECT == SPI_SLAVE
+		DIO_vSetPinDir(SPI_PORT, SPI_SCK_PIN, DIR_INPUT);
 	#endif
 }
 
