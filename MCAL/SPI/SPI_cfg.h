@@ -63,4 +63,13 @@
  * */
 #define SPI_CLK_SELECT		PRESCALE_4
 
+/* SPI double speed
+ *
+ * Options:
+ * 1- SPI2x_ENABLE
+ * 2- SPI2x_DISABLE
+ * */
+#define SPI_DOUBLE_SPEED	SPI2x_DISABLE
+
+
 #endif /* MCAL_SPI_SPI_CFG_H_ */

@@ -46,4 +46,8 @@
 #define PRESCALE_64		7
 
 
+/************** 	SPI DOUBLE SPEED	  **************/
+#define SPI2x_ENABLE 	0
+#define SPI2x_DISABLE	1
+
 #endif /* MCAL_SPI_SPI_PRI_H_ */
