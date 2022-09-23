@@ -43,7 +43,6 @@
 #define PRESCALE_2		4
 #define PRESCALE_8		5
 #define PRESCALE_32		6
-#define PRESCALE_64		7
 
 
 /************** 	SPI DOUBLE SPEED	  **************/
