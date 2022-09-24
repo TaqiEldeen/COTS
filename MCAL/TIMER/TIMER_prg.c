@@ -11,9 +11,9 @@
 #include "../DIO/DIO_int.h"
 #include <math.h>
 
+#include "../TIMER/TIMER_pri.h"
 #include "../TIMER/TIMER_cfg.h"
 #include "../TIMER/TIMER_int.h"
-#include "../TIMER/TIMER_pri.h"
 #include "../TIMER/TIMER_reg.h"
 
 
@@ -484,7 +484,6 @@ static void TIMER_vTimer0_SetupPhaseCorrectPWM	(){
 
 	return;
 }
-
 
 
 
