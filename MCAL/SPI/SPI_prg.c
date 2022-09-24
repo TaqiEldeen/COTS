@@ -85,3 +85,21 @@ u8 SPI_u8Tranceiver(u8 A_u8Data){
 	/*read the received data*/
 	return SPDR;
 }
+
+/**********************************************************************************************************
+ * Description : Interface Function to Set the SPI callback function
+ * Outputs     : void
+ * Inputs      : void
+ ***********************************************************************************************************/
+void SPI_vSetCallBack(void (*ptr) (u8)){
+	G_PTR_F = ptr;
+}
+
+
+void __vector_12(void){
+	if(G_PTR_F != ADDRESS_NULL){
+		G_PTR_F(SPDR);
+	} else {
+
+	}
+}

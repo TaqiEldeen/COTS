@@ -49,4 +49,11 @@
 #define SPI2x_ENABLE 	0
 #define SPI2x_DISABLE	1
 
+
+/************** 	SPI ISR pointer	  **************/
+void __vector_12(void)__attribute__((signal));  /*Serial Transfer Complete*/
+
+
+void (*G_PTR_F) (u8) = ADDRESS_NULL;
+
 #endif /* MCAL_SPI_SPI_PRI_H_ */
