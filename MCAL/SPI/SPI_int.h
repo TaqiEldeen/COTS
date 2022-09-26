@@ -42,6 +42,20 @@ u8 SPI_u8Tranceiver(u8 A_u8Data);
  * Outputs     : void
  * Inputs      : void
  ***********************************************************************************************************/
-void SPI_vSetCallBack(void (*ptr) (u8))
+void SPI_vSetCallBack(void (*ptr) (u8));
+
+/**********************************************************************************************************
+ * Description : Interface Function to transmit/receive
+ * Outputs     : received data
+ * Inputs      : void
+ ***********************************************************************************************************/
+u8 SPI_u8ReceiveChar();
+
+/**********************************************************************************************************
+ * Description : Interface Function to transmit/receive
+ * Outputs     : void
+ * Inputs      : data
+ ***********************************************************************************************************/
+void SPI_vTransmitChar(u8 A_u8Data);
 
 #endif /* MCAL_SPI_SPI_INT_H_ */

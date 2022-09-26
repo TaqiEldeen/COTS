@@ -39,16 +39,18 @@ void SPI_vInit(){
 		CLR_BIT(SPSR, SPI2X);
 	#endif
 
-	/*setup pins*/
-	#if SPI_MODE_SELECT == SPI_MASTER
-		DIO_vSetPinDir(SPI_PORT, SPI_MOSI_PIN, DIR_OUTPUT);
-		DIO_vSetPinDir(SPI_PORT, SPI_SCK_PIN, DIR_OUTPUT);
-		DIO_vSetPinDir(SPI_PORT, SPI_MISO_PIN, DIR_INPUT);
-	#else
-		DIO_vSetPinDir(SPI_PORT, SPI_MOSI_PIN, DIR_INPUT);
-		DIO_vSetPinDir(SPI_PORT, SPI_SCK_PIN, DIR_INPUT);
-		DIO_vSetPinDir(SPI_PORT, SPI_MISO_PIN, DIR_OUTPUT);
-	#endif
+		/*setup pins*/
+		#if SPI_MODE_SELECT == SPI_MASTER
+			DIO_vSetPinDir(SPI_PORT, SPI_MOSI_PIN, DIR_OUTPUT);
+			DIO_vSetPinDir(SPI_PORT, SPI_SCK_PIN, DIR_OUTPUT);
+			DIO_vSetPinDir(SPI_PORT, SPI_MISO_PIN, DIR_INPUT);
+			DIO_vSetPinDir(SPI_PORT, SPI_SS_PIN, DIR_OUTPUT);
+		#else
+			DIO_vSetPinDir(SPI_PORT, SPI_MOSI_PIN, DIR_INPUT);
+			DIO_vSetPinDir(SPI_PORT, SPI_SCK_PIN, DIR_INPUT);
+			DIO_vSetPinDir(SPI_PORT, SPI_MISO_PIN, DIR_OUTPUT);
+			DIO_vSetPinDir(SPI_PORT, SPI_SS_PIN, DIR_INPUT);
+		#endif
 }
 
 /**********************************************************************************************************
@@ -84,6 +86,27 @@ u8 SPI_u8Tranceiver(u8 A_u8Data){
 
 	/*read the received data*/
 	return SPDR;
+}
+
+/**********************************************************************************************************
+ * Description : Interface Function to transmit/receive
+ * Outputs     : received data
+ * Inputs      : void
+ ***********************************************************************************************************/
+u8 SPI_u8ReceiveChar(){
+
+	while(!(SPSR & (1<<SPIF)));
+	return SPDR;
+}
+
+/**********************************************************************************************************
+ * Description : Interface Function to transmit/receive
+ * Outputs     : void
+ * Inputs      : data
+ ***********************************************************************************************************/
+void SPI_vTransmitChar(u8 A_u8Data){
+	SPDR = A_u8Data;
+	while(!(SPSR & (1<<SPIF)));
 }
 
 /**********************************************************************************************************
