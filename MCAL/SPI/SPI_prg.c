@@ -38,19 +38,18 @@ void SPI_vInit(){
 	#else
 		CLR_BIT(SPSR, SPI2X);
 	#endif
-
-		/*setup pins*/
-		#if SPI_MODE_SELECT == SPI_MASTER
-			DIO_vSetPinDir(SPI_PORT, SPI_MOSI_PIN, DIR_OUTPUT);
-			DIO_vSetPinDir(SPI_PORT, SPI_SCK_PIN, DIR_OUTPUT);
-			DIO_vSetPinDir(SPI_PORT, SPI_MISO_PIN, DIR_INPUT);
-			DIO_vSetPinDir(SPI_PORT, SPI_SS_PIN, DIR_OUTPUT);
-		#else
-			DIO_vSetPinDir(SPI_PORT, SPI_MOSI_PIN, DIR_INPUT);
-			DIO_vSetPinDir(SPI_PORT, SPI_SCK_PIN, DIR_INPUT);
-			DIO_vSetPinDir(SPI_PORT, SPI_MISO_PIN, DIR_OUTPUT);
-			DIO_vSetPinDir(SPI_PORT, SPI_SS_PIN, DIR_INPUT);
-		#endif
+	/*setup pins*/
+	#if SPI_MODE_SELECT == SPI_MASTER
+		DIO_vSetPinDir(SPI_PORT, SPI_MOSI_PIN, DIR_OUTPUT);
+		DIO_vSetPinDir(SPI_PORT, SPI_SCK_PIN, DIR_OUTPUT);
+		DIO_vSetPinDir(SPI_PORT, SPI_MISO_PIN, DIR_INPUT);
+		DIO_vSetPinDir(SPI_PORT, SPI_SS_PIN, DIR_OUTPUT);
+	#else
+		DIO_vSetPinDir(SPI_PORT, SPI_MOSI_PIN, DIR_INPUT);
+		DIO_vSetPinDir(SPI_PORT, SPI_SCK_PIN, DIR_INPUT);
+		DIO_vSetPinDir(SPI_PORT, SPI_MISO_PIN, DIR_OUTPUT);
+		DIO_vSetPinDir(SPI_PORT, SPI_SS_PIN, DIR_INPUT);
+	#endif
 }
 
 /**********************************************************************************************************
