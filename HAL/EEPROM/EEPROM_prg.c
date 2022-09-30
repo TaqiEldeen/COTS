@@ -8,7 +8,6 @@
 #include "../../LIB/BIT_MATH.h"
 #include "../../LIB/STD_TYPES.h"
 #include "../../MCAL/TWI/TWI_int.h"
-#include "../../MCAL/DIO/DIO_int.h"
 #include "EEPROM_pri.h"
 #include "EEPROM_int.h"
 
@@ -50,7 +49,6 @@ u8 EEPROM_u8WriteData(u16 A_u16Addr, u8 A_u8Data){
 	if(TWI_u8MasterGetStatus() == TWI_STATUS_START){
 		TWI_vMasterWriteSlaveAdd(L_u8SlaveAddress, TWI_SLAVE_WR);
 	} else {
-		DIO_vSetPinVal(PORTA_ID, PIN1_ID, VAL_HIGH);
 		return EEPROM_ERR_START_CONDITION;
 	}
 
@@ -59,7 +57,6 @@ u8 EEPROM_u8WriteData(u16 A_u16Addr, u8 A_u8Data){
 		/*Send the address location*/
 		TWI_vMasterWriteDataByte(L_u8AddressLocation);
 	} else {
-		DIO_vSetPinVal(PORTA_ID, PIN0_ID, VAL_HIGH);
 		return EEPROM_ERR_SLAVE_ADR;
 	}
 
