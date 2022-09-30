@@ -3,7 +3,7 @@
 /***********		Author: TaqiEldeen	 	**************/
 /***********		Layer: MCAL			 	**************/
 /***********		Component: I2C			**************/
-/***********		Version: 1.00		 	**************/
+/***********		Version: 1.1		 	**************/
 /***********		Date: 26 Sep 2022	 	**************/
 /*********************************************************/
 
@@ -11,14 +11,15 @@
 #define MCAL_TWI_TWI_INT_H_
 
 
-/*****************		Status Codes for Master Transmitter Mode		*****************/
-#define START_ACK				0x08
-#define REP_START_ACK			0x10
-#define SLAVE_ADD_AND_WR_ACK	0x38
-#define SLAVE_ADD_AND_RD_ACK	0x40
-#define MSTR_WR_BYTE_ACK		0x48
-#define MSTR_RD_BYTE_ACK		0x50
-#define MSTR_RD_BYTE_NACK		0x58
+/*****************		the status codes		*****************/
+#define TWI_STATUS_START         0x08 // start has been sent
+#define TWI_STATUS_REP_START     0x10 // repeated start
+#define TWI_STATUS_MT_SLA_W_ACK  0x18 // Master transmit ( slave address + Write request ) to slave + Ack received from slave
+#define TWI_STATUS_MT_SLA_R_ACK  0x40 // Master transmit ( slave address + Read request ) to slave + Ack received from slave
+#define TWI_STATUS_MT_DATA_ACK   0x28 // Master transmit data and ACK has been received from Slave.
+#define TWI_STATUS_MR_DATA_ACK   0x50 // Master received data and send ACK to slave
+#define TWI_STATUS_MR_DATA_NACK  0x58 // Master received data but doesn't send ACK to slave
+
 
 /*****************		the states of addressing a slave (reading/writing)		*****************/
 #define TWI_SLAVE_RD	1
@@ -63,24 +64,33 @@ void TWI_vMasterWriteSlaveAdd(u8 A_u8Data, u8 A_u8RW);
 
 /**********************************************************************************************************
  * Description : Interface Function to Read data with acknowledge
- * Outputs     : void
+ * Outputs     : the data read
  * Inputs      : void
  ***********************************************************************************************************/
-u8 TWI_vMasterReadDataByteWith_ACK(void);
+u8 TWI_u8MasterReadDataByteWith_ACK(void);
 
 /**********************************************************************************************************
  * Description : Interface Function to read data without acknowledge
- * Outputs     : void
+ * Outputs     : the data read
  * Inputs      : void
  ***********************************************************************************************************/
-u8 TWI_vMasterReadDataByteWith_NACK(void);
+u8 TWI_u8MasterReadDataByteWith_NACK(void);
 
 /**********************************************************************************************************
  * Description : Interface Function to get status of the bus
- * Outputs     : void
+ * Outputs     : the status code
  * Inputs      : void
+ * NOTE		   : you can check for status codes with status macros
  ***********************************************************************************************************/
-u8 TWI_vMasterGetStatus(void);
+u8 TWI_u8MasterGetStatus(void);
+
+/**********************************************************************************************************
+ * Description : Interface Function to get status of the bus
+ * Outputs     : the next data byte
+ * Inputs      : void
+ * NOTE		   : YOU MUST FIRST USE ANY READ FUNCTION BEFORE CALLING THIS
+ ***********************************************************************************************************/
+u8 TWI_u8MasterReadNext(void);
 
 
 #endif /* MCAL_TWI_TWI_INT_H_ */

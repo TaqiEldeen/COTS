@@ -2,12 +2,13 @@
 /***********		Author: TaqiEldeen	 	**************/
 /***********		Layer: MCAL			 	**************/
 /***********		Component: I2C			**************/
-/***********		Version: 1.00		 	**************/
+/***********		Version: 1.1		 	**************/
 /***********		Date: 26 Sep 2022	 	**************/
 /*********************************************************/
 
 #include "../../LIB/BIT_MATH.h"
 #include "../../LIB/STD_TYPES.h"
+#include "../DIO/DIO_int.h"
 #include "TWI_pri.h"
 #include "TWI_cfg.h"
 #include "TWI_reg.h"
@@ -27,6 +28,9 @@ void TWI_vMasterInit(void){
 	/*set the node address and the general call recognition status*/
 	TWAR = (TWI_NODE_ADDRESS << TWI_SLAVE_ADDRESS_START_BIT)
 		| (TWI_GCRE << 0);
+
+	/*Enable the TWI*/
+	TWCR = (1<<TWEN);
 }
 
 /**********************************************************************************************************
@@ -49,8 +53,6 @@ void TWI_vSendStartCondition(void){
 void TWI_vSendStopCondition(void){
 	/*Sending the stop condition: clear the flag (by setting it), enable stop bit & enable the TWI*/
 	TWCR = (1<<TWINT) | (1<<TWSTO) | (1<<TWEN);
-	/*Waiting till the flag is set (status is presented)*/
-	while(!GET_BIT(TWCR, TWINT));
 }
 
 /**********************************************************************************************************
@@ -70,14 +72,16 @@ void TWI_vMasterWriteDataByte(u8 A_u8Data){
 /**********************************************************************************************************
  * Description : Interface Function to write the required slave address
  * Outputs     : void
- * Inputs      : the data
+ * Inputs      : the address of slave, the RW
  * NOTES	   : use the macros of reading/writing
  ***********************************************************************************************************/
 void TWI_vMasterWriteSlaveAdd(u8 A_u8Address, u8 A_u8RW){
 	/*Load the address of the slave and reading/writing state*/
 	TWDR = (A_u8Address << 1) | (A_u8RW << 0);
+
 	/*clear the flag and start TWI*/
 	TWCR = (1<<TWINT) | (1<<TWEN);
+
 	/*Wait till flag is set*/
 	while(!GET_BIT(TWCR, TWINT));
 }
@@ -87,14 +91,21 @@ void TWI_vMasterWriteSlaveAdd(u8 A_u8Address, u8 A_u8RW){
  * Outputs     : void
  * Inputs      : void
  ***********************************************************************************************************/
-u8 TWI_vMasterReadDataByteWith_ACK(void){
-	/*Enabling the acknowledgement*/
-	SET_BIT(TWCR, TWEA);
+u8 TWI_u8MasterReadDataByteWith_ACK(void){
+	u8 L_u8Data = 0;
+
+	TWCR = (1<<TWEN) | (1<<TWINT) | (1<<TWEA);
+
 	/*Wait till data is received*/
 	while(!GET_BIT(TWCR, TWINT));
-	/*Clear the flag*/
-	SET_BIT(TWCR, TWINT);
-	/*Returning the byte read*/
+
+	/*Check for status code*/
+	if(TWI_u8MasterGetStatus() == TWI_RECEVIED_DATA_ACK){
+		L_u8Data = TWDR;
+	} else {
+		L_u8Data = 0;
+	}
+
 	return TWDR;
 }
 
@@ -103,14 +114,28 @@ u8 TWI_vMasterReadDataByteWith_ACK(void){
  * Outputs     : void
  * Inputs      : void
  ***********************************************************************************************************/
-u8 TWI_vMasterReadDataByteWith_NACK(void){
-	/*Disabling the acknowledgement*/
-	CLR_BIT(TWCR, TWEA);
+u8 TWI_u8MasterReadDataByteWith_NACK(void){
+	u8 L_u8Data = 0;
+
+	SET_BIT(TWCR, TWINT);
+
 	/*Wait till data is received*/
 	while(!GET_BIT(TWCR, TWINT));
-	/*Clear the flag*/
-	SET_BIT(TWCR, TWINT);
+
+	/*Check for status code*/
+	if(TWI_u8MasterGetStatus() == TWI_RECEVIED_DATA_NACK){
+		L_u8Data = TWDR;
+	} else {
+		L_u8Data = 0;
+	}
+
 	/*Returning the byte read*/
+	return L_u8Data;
+}
+
+u8 TWI_u8MasterReadNext(void){
+	SET_BIT(TWCR, TWINT);
+	while(GET_BIT(TWCR, TWINT) == 0);
 	return TWDR;
 }
 
@@ -120,7 +145,7 @@ u8 TWI_vMasterReadDataByteWith_NACK(void){
  * Inputs      : void
  * NOTES	   : use the macros for status to check for status
  ***********************************************************************************************************/
-u8 TWI_vMasterGetStatus(void){
+u8 TWI_u8MasterGetStatus(void){
 	/*Returning the status only (Masking the prescaling bits and the reserved bit)*/
 	return (TWSR & 0xF8);
 }
