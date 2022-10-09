@@ -183,7 +183,7 @@ void (*G_PTRF_TIM2_CTC)(void) = ADDRESS_NULL;
 
 
 
-/**************   TIMERn GLOBAL VARIABLES  **************/
+/**************   TIMERn GLOBAL Functions  **************/
 static void TIMER_vTimer0_SetupCTC		();
 static void TIMER_vTimer0_SetupFastPWM	();
 static void TIMER_vTimer0_SetupPhaseCorrectPWM	();
@@ -193,8 +193,6 @@ static void TIMER_vTimer1_setupWGM();
 static void TIMER_vTimer2_SetupCTC		();
 static void TIMER_vTimer2_SetupFastPWM	();
 static void TIMER_vTimer2_SetupPhaseCorrectPWM	();
-
-
 
 
 

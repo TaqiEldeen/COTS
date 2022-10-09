@@ -27,12 +27,28 @@ typedef enum {
 #define	TIMER_DUTY_CYCLE_100	100
 
 /**********************************************************************************************************
- * Description : Interface Function to 1-prescaler select, 2-Timer mode select, 3-Set OC0 Pin state
+ * Description : Interface Function to 1-prescaler select, 2-Timer0 mode select, 3-Set OC0 Pin state
  * Outputs     : void
  * Inputs      : void
  * Notes	   : timer is initially off
  ***********************************************************************************************************/
-void TIMER_vInit ();
+void TIMER_vInitTimer0 ();
+
+/**********************************************************************************************************
+ * Description : Interface Function to 1-prescaler select, 2-Timer1 mode select, 3-Set OC0 Pin state
+ * Outputs     : void
+ * Inputs      : void
+ * Notes	   : timer is initially off
+ ***********************************************************************************************************/
+void TIMER_vInitTimer1 ();
+
+/**********************************************************************************************************
+ * Description : Interface Function to 1-prescaler select, 2-Timer2 mode select, 3-Set OC0 Pin state
+ * Outputs     : void
+ * Inputs      : void
+ * Notes	   : timer is initially off
+ ***********************************************************************************************************/
+void TIMER_vInitTimer2 ();
 
 /**********************************************************************************************************
  * Description : Interface Function to Turn on a timer
@@ -130,7 +146,7 @@ void TIMER_vCallBack_OVF	(ptr_func_t ptr, u8 A_u8TimerId);
  * Outputs     : void
  * Inputs      : pointer to function
  ***********************************************************************************************************/
-void TIMER_vCallBack_OCF0 (ptr_func_t ptr, u8 A_u8TimerId);
+void TIMER_vCallBack_OCF0 (ptr_func_t ptr);
 
 /**********************************************************************************************************
  * Description : Interface Function to set the call back function that will be executed during OCF1A

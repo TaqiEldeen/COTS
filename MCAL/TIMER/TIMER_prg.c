@@ -16,14 +16,13 @@
 #include "../TIMER/TIMER_int.h"
 #include "../TIMER/TIMER_reg.h"
 
-
 /**********************************************************************************************************
- * Description : Interface Function to 1-Timer mode select, 2-Set OCn Pin state, 3-Disable force o/p compare, 4- enable interrupt
+ * Description : Interface Function to 1-prescaler select, 2-Timer0 mode select, 3-Set OC0 Pin state
  * Outputs     : void
  * Inputs      : void
  * Notes	   : timer is initially off
  ***********************************************************************************************************/
-void TIMER_vInit (){
+void TIMER_vInitTimer0 (){
 #if TIMER0_STATE == TIMER_ENABLE
 	/*Step 1: Choose timer mode*/
 	#if TIMER0_WGM_MODE == TIMER0_WGM_NORMAL_MODE
@@ -53,9 +52,15 @@ void TIMER_vInit (){
 #else
 
 #endif
+}
 
-
-
+/**********************************************************************************************************
+ * Description : Interface Function to 1-prescaler select, 2-Timer1 mode select, 3-Set OC0 Pin state
+ * Outputs     : void
+ * Inputs      : void
+ * Notes	   : timer is initially off
+ ***********************************************************************************************************/
+void TIMER_vInitTimer1 (){
 #if TIMER1_STATE == TIMER_ENABLE
 
 	/*Setup the mode*/
@@ -67,18 +72,24 @@ void TIMER_vInit (){
 #else
 
 #endif
+}
 
-
-
+/**********************************************************************************************************
+ * Description : Interface Function to 1-prescaler select, 2-Timer2 mode select, 3-Set OC0 Pin state
+ * Outputs     : void
+ * Inputs      : void
+ * Notes	   : timer is initially off
+ ***********************************************************************************************************/
+void TIMER_vInitTimer2 (){
 #if TIMER2_STATE == TIMER_ENABLE
 	/*Step 1: Choose timer mode*/
 	#if TIMER2_WGM_MODE == TIMER2_WGM_NORMAL_MODE
-		TCCR0 &= TIMER0_WGM_MASK;
-		TCCR0 |= TIMER0_WGM_MODE;
+		TCCR2 &= TIMER2_WGM_MASK;
+		TCCR2 |= TIMER2_WGM_MODE;
 
 		/*Set the interrupt*/
 		#if TIMER2_OVF_INT_STATE == INT_ENABLE
-			SET_BIT(TIMSK, TOIE0);
+			SET_BIT(TIMSK, TOIE2);
 		#endif
 
 	#elif TIMER2_WGM_MODE == TIMER2_WGM_CTC_MODE
@@ -94,8 +105,6 @@ void TIMER_vInit (){
 #else
 
 #endif
-
-	return;
 }
 
 /**********************************************************************************************************
@@ -118,7 +127,6 @@ void TIMER_vTurnOn (u8 A_u8TimerId){
 			TCCR2 |= TIMER2_CLK_SELECT;
 			break;
 	}
-
 	return;
 }
 
@@ -317,7 +325,7 @@ void TIMER_vCallBack_OVF (ptr_func_t ptr, u8 A_u8TimerId){
  * Outputs     : void
  * Inputs      : pointer to function
  ***********************************************************************************************************/
-void TIMER_vCallBack_OCF0 (ptr_func_t ptr, u8 A_u8TimerId){
+void TIMER_vCallBack_OCF0 (ptr_func_t ptr){
 	G_PTRF_TIM0_CTC = ptr;
 	return;
 }
@@ -392,7 +400,7 @@ void  TIMER_vDelayMilli (u16 A_u16DelayMs, u8 A_u8TimerId, ptr_func_t ptr){
 	L_f32TickTime = (f32)L_u16PrescaleVal / TIMER0_InputFreq;
 
 	/*Time required for complete 1 over flow*/
-	L_f32TimeOverFlow = TIMER0_MAX_COUNT * (L_f32TickTime * ((u16)1000));
+	L_f32TimeOverFlow = (TIMER0_MAX_COUNT + 1) * (L_f32TickTime * ((u16)1000));
 
 	/*Over flow needed by this delay*/
 	L_u16OverFlowCounts = (u16)ceil(( ((f32)A_u16DelayMs /L_f32TimeOverFlow) ));
@@ -403,12 +411,11 @@ void  TIMER_vDelayMilli (u16 A_u16DelayMs, u8 A_u8TimerId, ptr_func_t ptr){
 
 
 #if  TIMER0_WGM_MODE == TIMER0_WGM_CTC_MODE
-		TIMER_vSetOcrVal(TIMER0_ID, (TIMER0_MAX_COUNT - L_u8PreloadVal));
+		TIMER_vSetOcr0Val((TIMER0_MAX_COUNT - L_u8PreloadVal));
 		G_PTRF_TIM0_CTC = ptr;
 #elif TIMER0_WGM_MODE == TIMER0_WGM_NORMAL_MODE
 		G_PTRF_TIM0_OVF = ptr;
 #endif
-
 
 }
 
@@ -427,10 +434,9 @@ static void TIMER_vTimer0_SetupCTC(){
 	TCCR0 |= TIMER0_OC0_MODE;
 
 	#if TIMER0_OC0_MODE == TIMER0_OC0_DISCONNECT
-
 	#else
-		/*Must set the OC0 pin output if in CTC, fast PWM or phase correct PWM modes*/
-		DIO_vSetPinDir(OC0_PORT, OC0_PIN, DIR_OUTPUT);
+	/*Must set the OC0 pin output if in CTC, fast PWM or phase correct PWM modes*/
+	DIO_vSetPinDir(OC0_PORT, OC0_PIN, DIR_OUTPUT);
 	#endif
 
 	#if TIMER0_CTC_INT_STATE == INT_ENABLE
@@ -497,9 +503,9 @@ static void TIMER_vTimer2_SetupCTC(){
 
 	/*Setup the OC0 Pin*/
 	TCCR2 &= TIMER2_COM_MASK;
-	TCCR2 |= TIMER2_OC0_MODE;
+	TCCR2 |= TIMER2_OC2_MODE;
 
-	#if TIMER2_OC0_MODE == TIMER2_OC2_DISCONNECT
+	#if TIMER2_OC2_MODE == TIMER2_OC2_DISCONNECT
 
 	#else
 		/*Must set the OC2 pin output if in CTC, fast PWM or phase correct PWM modes*/
@@ -517,7 +523,7 @@ static void TIMER_vTimer2_SetupFastPWM	(){
 	TCCR2 &= TIMER2_WGM_MASK;
 	TCCR2 |= TIMER2_WGM_MODE;
 
-	/*Step 2: Setup the OC0 Pin*/
+	/*Step 2: Setup the OC2 Pin*/
 	#if TIMER2_PWM_MODE == PWM_INVERTING
 		SET_BIT(TCCR2, COM20);
 		SET_BIT(TCCR2, COM21);
@@ -540,7 +546,7 @@ static void TIMER_vTimer2_SetupPhaseCorrectPWM	(){
 	TCCR2 &= TIMER2_WGM_MASK;
 	TCCR2 |= TIMER2_WGM_MODE;
 
-	/*Step 2: Setup the OC0 Pin*/
+	/*Step 2: Setup the OC2 Pin*/
 	#if TIMER2_PWM_MODE == PWM_INVERTING
 		SET_BIT(TCCR2, COM00);
 		SET_BIT(TCCR2, COM01);
@@ -649,7 +655,11 @@ void TIMER_vTimer1_setupWGM() {
 		/*Setup the OC1x pin mode*/
 		TCCR1A &= TIMER1_COM1xx_MASK;
 		TCCR1A |= (TIMER1_OC1A_MODE << COM1A0);
-		TCCR1A |= (TIMER1_OC1B_MOE << COM1B0);
+		TCCR1A |= (TIMER1_OC1B_MODE << COM1B0);
+
+	#if TIMER1_OVF_INT_STATE == INT_ENABLE
+		TIMSK |= (1<<TOIE1);
+	#endif
 
 		/*Set the pin direction*/
 		#if TIMER1_OC1A_MODE != TIMER1_OC1x_DISCONNECT
