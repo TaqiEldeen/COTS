@@ -89,7 +89,7 @@ void TIM1_vCallBack_OCF1B (ptr_func_t ptr);
  * Outputs     : void
  * Inputs      : pointer to function
  ***********************************************************************************************************/
-void TIMER_vCallBack_ICF1 (ptr_func_t ptr);
+void TIM1_vCallBack_ICF1 (ptr_func_t ptr);
 
 /**********************************************************************************************************
  * Description : interface Function to setup the OC1a pin duty cycle if in PWM mode
